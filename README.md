@@ -21,6 +21,7 @@
         ├── operations.py<br>
         └── finder.py<br>
 
+
  ## Project Components:
  
 > - app.py: This is the main entry point of the application. It will initialize the Flask app, set up routes, and handle requests and responses.
