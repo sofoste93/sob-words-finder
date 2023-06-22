@@ -87,5 +87,88 @@ pip install flask flask_bootstrap flask_uploads PyPDF2 docx2txt
 </body>
 </html>
 
->>
+## Backend logic for utils
+
+>> authentication.py
 >
+>import random
+>import string
+
+
+>>def generate_credentials():
+    """Generate a random username and a 5-digit PIN."""
+    username = ''.join(random.choices(string.ascii_letters, k=5))
+    pin = ''.join(random.choices(string.digits, k=5))
+    return username, pin
+
+
+>>def verify_credentials(username, pin, session):
+    """Verify if the provided username and PIN match the ones stored in session."""
+    return session.get('username') == username and session.get('pin') == pin 
+
+>> finder.py
+> 
+>import os
+>from PyPDF2 import PdfFileReader
+
+
+>>def find_word_in_txt(file_path, word):
+    """Search for the word in a .txt file and return the line numbers where it was found."""
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    results = [i for i, line in enumerate(lines) if word in line]
+    return results
+
+
+>>def find_word_in_pdf(file_path, word):
+    """Search for the word in a .pdf file and return the page numbers where it was found."""
+    with open(file_path, 'rb') as file:
+        pdf = PdfFileReader(file)
+        results = []
+
+        for i in range(pdf.getNumPages()):
+            page = pdf.getPage(i)
+            if word in page.extractText():
+                results.append(i)
+
+    return results
+
+
+>>def find_word(file_path, word):
+    """Choose the right function depending on the file's extension and execute it."""
+    _, extension = os.path.splitext(file_path)
+
+    if extension == '.txt':
+        return find_word_in_txt(file_path, word)
+    elif extension == '.pdf':
+        return find_word_in_pdf(file_path, word)
+
+>> operations.py
+>
+>import operator
+>import random
+> 
+>>def generate_operation():
+    """Generate a random arithmetic operation and its result."""
+    ops = {
+        '+': operator.add,
+        '-': operator.sub,
+        '*': operator.mul,
+        '/': operator.floordiv
+    }
+    num1 = random.randint(1, 10)
+    num2 = random.randint(1, 10)
+    op = random.choice(list(ops.keys()))
+    result = ops[op](num1, num2)
+    return f"{num1} {op} {num2}", result
+> 
+>>def verify_answer(answer, session):
+    """Verify if the provided answer matches the stored result."""
+    return session.get('result') == int(answer)
+
+## Flask app logic
+
+>> app.py
+>
+ 
