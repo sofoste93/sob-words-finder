@@ -2,9 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome to sob-word-finder web app</title>
+    <title>Welcome Page</title>
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-
+    <div class="container mt-5">
+        <h1>Welcome to sobWordsFinder!</h1>
+        <p>Solve the following operation to proceed</p>
+        <form action="/validate_operation" method="post">
+            <h3>{{ operation }}</h3>
+            <input type="text" id="answer" name="answer">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
 </body>
 </html>
