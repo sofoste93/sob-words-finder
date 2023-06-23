@@ -4,7 +4,7 @@ from PyPDF2 import PdfFileReader
 
 def find_word_in_txt(file_path, word):
     """Search for the word in a .txt file and return the line numbers where it was found."""
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r') as file:  # 'file_path' should be the full path to the file
         lines = file.readlines()
 
     results = [i for i, line in enumerate(lines) if word in line]

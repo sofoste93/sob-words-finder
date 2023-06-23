@@ -8,15 +8,22 @@
 <body>
     <div class="container mt-5">
         <h1>{{ title }}</h1>
-        <form action="/search" method="post" enctype="multipart/form-data">
+        {% if is_custom %}
+        <form action="/custom_finder" method="post" enctype="multipart/form-data">
             <label for="word">Word:</label>
             <input type="text" id="word" name="word">
-            {% if is_custom %}
-                <label for="file">Upload file:</label>
-                <input type="file" id="file" name="file">
-            {% endif %}
+            <label for="file">Upload file:</label>
+            <input type="file" id="file" name="file">
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
+        {% else %}
+        <form action="/default_finder" method="post" enctype="multipart/form-data">
+            <label for="word">Word:</label>
+            <input type="text" id="word" name="word">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        {% endif %}
+
         {% if results %}
             <h2>Results:</h2>
             <ul>

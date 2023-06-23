@@ -5,6 +5,8 @@ import os
 app = Flask(__name__)
 app.secret_key = 'super secret key'  # Replace this with a real secret key in production!
 
+from flask import jsonify
+
 
 @app.route('/', methods=['GET', 'POST'])
 def landing():
@@ -14,7 +16,9 @@ def landing():
             username, pin = authentication.generate_credentials()
             session['username'] = username
             session['pin'] = pin
-            return redirect(url_for('login'))
+            return jsonify({'status': 'success', 'username': username, 'pin': pin}), 200
+        else:
+            return jsonify({'status': 'failure', 'message': 'Incorrect answer. Please try again.'}), 200
     else:
         operation, result = operations.generate_operation()
         session['result'] = result
@@ -47,7 +51,8 @@ def default_finder():
         return redirect(url_for('login'))
     if request.method == 'POST':
         word = request.form.get('word')
-        results = finder.find_word('default.txt', word)
+        file_path = os.path.join(os.path.dirname(__file__), 'uploads', 'default.txt')
+        results = finder.find_word(file_path, word)
         return render_template('search.html', results=results, title='Default Finder', is_custom=False)
     else:
         return render_template('search.html', title='Default Finder', is_custom=False)
@@ -59,11 +64,37 @@ def custom_finder():
         return redirect(url_for('login'))
     if request.method == 'POST':
         word = request.form.get('word')
-        file = request.files['file']
-        file_path = os.path.join('uploads', file.filename)
+        file = request.files['file']  # Here's the file reference
+        file_path = os.path.join(os.path.dirname(__file__), 'uploads', file.filename)  # It's used here
         file.save(file_path)
         results = finder.find_word(file_path, word)
         return render_template('search.html', results=results, title='Custom Finder', is_custom=True)
+    else:
+        return render_template('search.html', title='Custom Finder', is_custom=True)
+
+
+@app.route('/new-operation', methods=['GET'])
+def new_operation():
+    operation, result = operations.generate_operation()
+    session['result'] = result
+    return jsonify({'operation': operation}), 200
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        word = request.form.get('word')
+        file = request.files.get('file')  # this may be None if no file was uploaded
+        if file:  # custom search in the uploaded file
+            file_path = os.path.join('uploads', file.filename)
+            file.save(file_path)
+            results = finder.find_word(file_path, word)
+            return render_template('search.html', results=results, title='Custom Finder', is_custom=True)
+        else:  # default search in 'default.txt'
+            results = finder.find_word('default.txt', word)
+            return render_template('search.html', results=results, title='Default Finder', is_custom=False)
     else:
         return render_template('search.html', title='Custom Finder', is_custom=True)
 
