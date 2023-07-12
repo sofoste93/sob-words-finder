@@ -3,7 +3,7 @@ from utils import authentication, operations, finder
 import os
 
 app = Flask(__name__)
-app.secret_key = 'super secret key'  # Replace this with a real secret key in production!
+app.secret_key = 'super secret key'  # Replace this with your own secret key!
 
 from flask import jsonify
 
