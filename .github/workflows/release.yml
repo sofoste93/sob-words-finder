@@ -1,0 +1,66 @@
+name: Release desktop apps
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact: SOB-Words-Finder-Windows.exe
+          - os: ubuntu-latest
+            artifact: SOB-Words-Finder-Linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pytest
+      - run: pyinstaller --noconfirm --clean sob-words-finder.spec
+      - name: Rename artifact (Windows)
+        if: runner.os == 'Windows'
+        run: Move-Item dist/SOB-Words-Finder.exe dist/${{ matrix.artifact }}
+      - name: Rename artifact (Linux)
+        if: runner.os == 'Linux'
+        run: mv dist/SOB-Words-Finder dist/${{ matrix.artifact }} && chmod +x dist/${{ matrix.artifact }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/${{ matrix.artifact }}
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: "SOB Words Finder 2.0.0 · New Planet Orbit"
+          body: |
+            ## Mission 02 is cleared for launch
+
+            A complete rebuild of SOB Words Finder as a private local document scanner with a bilingual EN/FR mission-control interface.
+
+            ### Highlights
+            - Search TXT, Markdown, CSV, LOG, JSON, PDF, and DOCX documents
+            - Contextual results with line, page, or paragraph locations
+            - Case-sensitive and whole-word controls with persistent settings
+            - No stored uploads: documents are processed in memory
+            - Animated spacecraft telemetry, responsive UI, and reduced-motion support
+            - Standalone Windows and Linux applications
+
+            Download the file for your platform and launch it. The app opens in your default browser and runs only on your computer.
+          files: release-assets/*
+          generate_release_notes: true

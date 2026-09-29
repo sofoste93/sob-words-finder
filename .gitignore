@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments and local secrets
+.venv/
+.python-runtime/
+venv/
+.env
+.env.*
+!.env.example
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Build and package output
+build/
+dist/
+*.spec.bak
+*.egg-info/
+
+# Runtime documents: user files must never be committed
+uploads/
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+~$*

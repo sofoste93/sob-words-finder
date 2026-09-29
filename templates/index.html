@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en" data-theme="deep-space">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070a12">
+  <meta name="description" content="Search words and phrases across local documents from a private mission-control interface.">
+  <title>SOB Words Finder · Mission Control</title>
+  <link rel="icon" href="{{ url_for('static', filename='brand-mark.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+  <a class="skip-link" href="#finder">Skip to finder</a>
+  <div class="star-field" aria-hidden="true"></div>
+  <div class="orbit orbit-one" aria-hidden="true"><i></i></div>
+  <div class="orbit orbit-two" aria-hidden="true"><i></i></div>
+
+  <header class="topbar">
+    <a class="brand" href="#finder" aria-label="SOB Words Finder home">
+      <img src="{{ url_for('static', filename='brand-mark.svg') }}" alt="">
+      <span><strong>SOB</strong><small>WORDS FINDER</small></span>
+    </a>
+    <div class="mission-state"><span class="pulse"></span><span data-i18n="systems">ALL SYSTEMS NOMINAL</span></div>
+    <nav aria-label="Primary navigation">
+      <button class="nav-button active" data-view="finder" data-i18n="finder">Finder</button>
+      <button class="nav-button" data-view="settings" data-i18n="settings">Settings</button>
+      <button class="nav-button" data-view="help" data-i18n="help">Help</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="view active" id="finder" data-view-panel="finder">
+      <div class="hero-copy">
+        <p class="eyebrow"><span>MISSION 02</span> / LEXICAL RECONNAISSANCE</p>
+        <h1 data-i18n="headline">Find the signal<br><em>inside the noise.</em></h1>
+        <p class="lede" data-i18n="lede">Scan a local document for any word or phrase. Your files stay aboard this machine.</p>
+      </div>
+
+      <div class="cockpit-grid">
+        <section class="panel search-panel" aria-labelledby="scan-title">
+          <div class="panel-heading">
+            <span class="step">01</span>
+            <div><p data-i18n="console">SCAN CONSOLE</p><h2 id="scan-title" data-i18n="target">Define your target</h2></div>
+            <span class="secure"><span>●</span> <span data-i18n="local">LOCAL ONLY</span></span>
+          </div>
+
+          <form id="search-form" enctype="multipart/form-data">
+            <fieldset class="source-selector">
+              <legend data-i18n="source">Source</legend>
+              <label><input type="radio" name="source" value="sample" checked><span><b data-i18n="sample">Mission log</b><small data-i18n="sampleHint">Try the onboard sample</small></span></label>
+              <label><input type="radio" name="source" value="upload"><span><b data-i18n="document">Your document</b><small data-i18n="documentHint">TXT · PDF · DOCX + more</small></span></label>
+            </fieldset>
+
+            <div class="drop-zone" id="drop-zone" hidden>
+              <input id="file" name="file" type="file" accept=".txt,.md,.csv,.log,.json,.pdf,.docx">
+              <label for="file"><span class="upload-icon">↥</span><b id="file-label" data-i18n="drop">Drop a document or browse</b><small data-i18n="limit">Up to 16 MB · processed in memory</small></label>
+            </div>
+
+            <label class="query-label" for="query"><span data-i18n="query">WORD OR PHRASE</span><span>120 MAX</span></label>
+            <div class="query-row">
+              <input id="query" name="query" type="search" maxlength="120" autocomplete="off" placeholder="signal" required>
+              <button class="scan-button" type="submit"><span data-i18n="launch">Launch scan</span><i>→</i></button>
+            </div>
+            <p class="form-message" id="form-message" role="alert"></p>
+          </form>
+        </section>
+
+        <aside class="panel telemetry" aria-label="Live telemetry">
+          <div class="panel-heading compact"><div><p>LIVE FEED</p><h2 data-i18n="telemetry">Telemetry</h2></div><span class="coordinates">48° 51′ N</span></div>
+          <div class="planet" aria-hidden="true"><div class="planet-glow"></div><div class="planet-body"></div><div class="scan-line"></div></div>
+          <div class="telemetry-grid">
+            <div><small data-i18n="velocity">VELOCITY</small><strong id="velocity">27,580</strong><span>KM/H</span></div>
+            <div><small data-i18n="altitude">ALTITUDE</small><strong id="altitude">408.2</strong><span>KM</span></div>
+            <div><small data-i18n="orbit">ORBIT</small><strong id="orbit-count">07</strong><span data-i18n="stable">STABLE</span></div>
+          </div>
+          <p class="transmission"><span>THOR</span> <q data-i18n="thor">Transmission complete.</q></p>
+        </aside>
+      </div>
+
+      <section class="results-panel" id="results-panel" hidden aria-live="polite">
+        <div class="results-head">
+          <div><p class="eyebrow">SCAN REPORT</p><h2 id="results-title">Signal acquired</h2><p id="results-file"></p></div>
+          <div class="metrics"><div><strong id="occurrences">0</strong><span data-i18n="occurrences">OCCURRENCES</span></div><div><strong id="matched">0</strong><span data-i18n="locations">LOCATIONS</span></div><div><strong id="scanned">0</strong><span data-i18n="scanned">SCANNED</span></div></div>
+        </div>
+        <div id="result-list" class="result-list"></div>
+      </section>
+    </section>
+
+    <section class="view secondary-view" id="settings" data-view-panel="settings" hidden>
+      <div class="section-intro"><p class="eyebrow">FLIGHT CONFIGURATION</p><h1 data-i18n="settingsTitle">Tune the scanner.</h1><p data-i18n="settingsIntro">Your preferences are saved locally in this browser.</p></div>
+      <div class="settings-grid">
+        <label class="setting-card"><span><b data-i18n="language">Interface language</b><small>EN / FR</small></span><select id="language"><option value="en">English</option><option value="fr">Français</option></select></label>
+        <label class="setting-card"><span><b data-i18n="case">Case-sensitive</b><small data-i18n="caseHint">Distinguish Signal from signal</small></span><input class="switch" id="case-sensitive" type="checkbox"></label>
+        <label class="setting-card"><span><b data-i18n="whole">Whole words</b><small data-i18n="wholeHint">Exclude partial matches</small></span><input class="switch" id="whole-word" type="checkbox"></label>
+        <label class="setting-card"><span><b data-i18n="motion">Reduce motion</b><small data-i18n="motionHint">Pause ambient animation</small></span><input class="switch" id="reduce-motion" type="checkbox"></label>
+        <label class="setting-card"><span><b data-i18n="resultLimit">Result limit</b><small data-i18n="resultHint">Locations displayed per scan</small></span><select id="result-limit"><option>25</option><option selected>50</option><option>100</option><option>200</option></select></label>
+      </div>
+    </section>
+
+    <section class="view secondary-view" id="help" data-view-panel="help" hidden>
+      <div class="section-intro"><p class="eyebrow">OPERATIONS MANUAL</p><h1 data-i18n="helpTitle">Ready for launch.</h1><p data-i18n="helpIntro">Everything you need for a clean first scan.</p></div>
+      <div class="help-grid">
+        <article><span>01</span><h2 data-i18n="helpOneTitle">Choose a source</h2><p data-i18n="helpOne">Use the mission log for a quick test or select a document from your device.</p></article>
+        <article><span>02</span><h2 data-i18n="helpTwoTitle">Set the target</h2><p data-i18n="helpTwo">Enter a word or a phrase. Fine-tune matching rules in Settings.</p></article>
+        <article><span>03</span><h2 data-i18n="helpThreeTitle">Read the report</h2><p data-i18n="helpThree">Each result shows its line, page, or paragraph and a contextual excerpt.</p></article>
+      </div>
+      <div class="privacy-note"><b data-i18n="privacyTitle">Private by design</b><p data-i18n="privacy">Documents are processed in memory and never uploaded to a remote service. Closing the app clears them.</p></div>
+    </section>
+  </main>
+
+  <footer><span>SOB WORDS FINDER / v{{ version }}</span><span>BUILD 2026.09 · <i></i> NOMINAL</span></footer>
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</body>
+</html>

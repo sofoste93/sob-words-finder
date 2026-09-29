@@ -1,52 +1,107 @@
-# sob-words-finder
-> A simple web app to help you find any word referenced in a text 
-> file the app allows you to upload. Logic written in python. 
-> Feel free to find bug and contribute; happy coding. ;-)
+<div align="center">
+  <img src="static/brand-mark.svg" width="92" alt="SOB Words Finder orbit logo">
+  <h1>SOB Words Finder</h1>
+  <p><strong>Find the signal inside the noise.</strong></p>
+  <p>A private local document scanner wrapped in a bilingual mission-control interface.</p>
 
-## Project breakdown
+  [![Release](https://img.shields.io/github/v/release/sofoste93/sob-words-finder?style=flat-square&color=c8ff63)](https://github.com/sofoste93/sob-words-finder/releases/latest)
+  [![Build](https://img.shields.io/github/actions/workflow/status/sofoste93/sob-words-finder/release.yml?style=flat-square&label=release)](https://github.com/sofoste93/sob-words-finder/actions)
+  [![License](https://img.shields.io/github/license/sofoste93/sob-words-finder?style=flat-square)](LICENSE)
+</div>
 
->sobWordsFinder/<br>
-    ├── app.py<br>
-    ├── static/<br>
-    │   ├── css/<br>
-    │   └── js/<br>
-    ├── templates/<br>
-    │   ├── landing.html<br>
-    │   ├── login.html<br>
-    │   ├── dashboard.html<br>
-    │   └── search.html<br>
-    ├── uploads/<br>
-    └── utils/<br>
-        ├── authentication.py<br>
-        ├── operations.py<br>
-        └── finder.py<br>
+## Mission overview
 
+SOB Words Finder searches a word or phrase across a document and returns useful context instead of a bare index. Each hit includes its line, page, or paragraph, the surrounding text, and the number of occurrences at that location.
 
- ## Project Components:
- 
-> - app.py: This is the main entry point of the application. It will initialize the Flask app, set up routes, and handle requests and responses.
+- **Seven formats:** TXT, Markdown, CSV, LOG, JSON, PDF, and DOCX
+- **Private processing:** documents stay in memory and are never sent to a remote service
+- **Precise scanning:** optional case-sensitive and whole-word matching
+- **Useful reports:** contextual excerpts, occurrence totals, and scanned-location counts
+- **Bilingual flight deck:** complete English and French interface
+- **Accessible motion:** responsive layout and a persistent reduced-motion setting
+- **Portable release:** standalone Windows and Linux builds open in your default browser
 
-> - static folder: This will contain Bootstrap files (CSS and JS), and potentially any other static files.
+## Launch the app
 
-> - templates folder: This will contain all HTML templates.
+### Standalone release
 
-> - landing.html: This will display a simple math question to the user. On correct answer, it redirects to the login page with auto-generated credentials.
+1. Open the [latest release](https://github.com/sofoste93/sob-words-finder/releases/latest).
+2. Download the application for Windows or Linux.
+3. Launch it. Mission Control opens at a private local address in your default browser.
 
-> - login.html: This page will allow the user to login using the provided credentials. Successful login redirects to the dashboard.
+The executable starts a local server bound to `127.0.0.1`. It does not expose the app to your network.
 
-> - dashboard.html: This page will contain two main buttons/links: one for the default finder and one for the custom finder.
+### Run from source
 
-> - search.html: This will be used for both default and custom finder pages. It will include a form for inputting a search term and for uploading a file in case of the custom finder. It will also display the search results.
+Python 3.10 or newer is required.
 
-> - uploads folder: This will store all uploaded files.
+```bash
+git clone https://github.com/sofoste93/sob-words-finder.git
+cd sob-words-finder
+python -m venv .venv
+```
 
-> - utils folder: This will contain Python scripts for the application's backend logic.
+Activate the environment and install dependencies:
 
-> - authentication.py: This will handle the generation of credentials and login verification.
+```bash
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 
-> - operations.py: This will handle the generation of random arithmetic operations and verification of the user's answer.
+# macOS / Linux
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
 
-> - finder.py: This will contain the logic for searching a document for a specific word, both for the default and the custom finder.
+Start the development server:
 
-> In the front-end, we use HTML templates with Bootstrap 5 for styling.
-> 
+```bash
+python app.py
+```
+
+Then open [http://127.0.0.1:5000](http://127.0.0.1:5000).
+
+## Search behavior
+
+Text-like files are scanned line by line. PDFs are scanned page by page, and DOCX files paragraph by paragraph. Matching is case-insensitive by default. Settings are stored only in browser local storage.
+
+Uploads are limited to 16 MB. The endpoint reads each upload directly into memory; the ignored `uploads/` path exists only to guard against files created by older versions.
+
+## Development
+
+Install the development toolchain and run the tests:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest
+```
+
+Build the standalone application on Windows:
+
+```powershell
+.\build.ps1
+```
+
+The executable is written to `dist/SOB-Words-Finder.exe`. Pushing a `v*` tag runs the release workflow, tests the project, builds Windows and Linux applications, and attaches them to a GitHub release.
+
+## Architecture
+
+```text
+app.py                  Flask app and JSON search API
+launcher.py             standalone desktop entry point
+utils/finder.py         extraction and search engine
+templates/index.html    bilingual mission-control interface
+static/                 self-contained visual system and client logic
+data/                   onboard sample mission log
+tests/                  backend and search tests
+```
+
+## Français
+
+SOB Words Finder analyse localement vos documents et affiche chaque correspondance avec son contexte et sa position. Aucun fichier n'est envoyé vers un service distant ou conservé après la requête. Téléchargez simplement l'application depuis la [dernière release](https://github.com/sofoste93/sob-words-finder/releases/latest), lancez-la, puis passez l'interface en français depuis **Réglages**.
+
+## Security and contributions
+
+Do not use the development server on a public interface. Report security issues privately to the repository owner. Bug reports and focused pull requests are welcome; please include a test when changing search behavior.
+
+Released under the [Apache License 2.0](LICENSE).
